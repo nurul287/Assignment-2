@@ -10,16 +10,57 @@ const createUserIntoDB = async (userData: IUser) => {
 };
 
 const getAllUsersFromBD = async () => {
-  const result = await User.find();
+  const result = await User.find().select({
+    userName: 1,
+    fullName: 1,
+    age: 1,
+    email: 1,
+    address: 1,
+    _id: 0,
+  });
   return result;
 };
 
 const getSingleUserFromBD = async (userId: number) => {
   if (await User.isUserExists(userId)) {
-    const result = await User.findOne({ userId });
+    const result = await User.findOne({ userId }).select({
+      userId: 1,
+      userName: 1,
+      fullName: 1,
+      age: 1,
+      email: 1,
+      isActive: 1,
+      hobbies: 1,
+      address: 1,
+      _id: 0,
+    });
     return result;
+  } else {
+    throw new Error('User not found');
   }
-  throw new Error('User not found');
+};
+
+const updateUserIntoDB = async (userData: IUser, userId: number) => {
+  if (await User.isUserExists(userId)) {
+    const result = await User.updateOne({ userId }, userData);
+    if (result.modifiedCount > 0) {
+      const updatedUser = await User.findOne({ userId }).select({
+        userId: 1,
+        userName: 1,
+        fullName: 1,
+        age: 1,
+        email: 1,
+        isActive: 1,
+        hobbies: 1,
+        address: 1,
+        _id: 0,
+      });
+
+      return updatedUser;
+    }
+  } else {
+    throw new Error('User not found');
+  }
 };
 
 const deleteUserFromBD = async (userId: number) => {
@@ -31,13 +72,6 @@ const deleteUserFromBD = async (userId: number) => {
   }
 };
 
-const updateUserIntoDB = async (userData: IUser, userId: number) => {
-  if (await User.isUserExists(userId)) {
-    const result = await User.updateOne({ userId }, userData);
-    return result;
-  }
-  throw new Error('User not found');
-};
 const updateUserOrderIntoDB = async (orderData: IUserOrder, userId: number) => {
   if (await User.isUserExists(userId)) {
     const result = await User.updateOne(
@@ -45,36 +79,57 @@ const updateUserOrderIntoDB = async (orderData: IUserOrder, userId: number) => {
       { $push: { orders: orderData } },
     );
     return result;
+  } else {
+    throw new Error('User not found');
   }
-  throw new Error('User not found');
 };
 
 const getSingleUserOrdersFromDB = async (userId: number) => {
   if (await User.isUserExists(userId)) {
-    const result = await User.findOne({ userId }).projection({ orders: 1 });
+    const result = await User.findOne({ userId }).select({ orders: 1, _id: 0 });
     return result;
+  } else {
+    throw new Error('User not found');
   }
-  throw new Error('User not found');
 };
 
 const getUserOrderTotalFromDB = async (userId: number) => {
   if (await User.isUserExists(userId)) {
     const result = await User.aggregate([
       {
-        $match: { userId },
+        $match: {
+          userId,
+        },
       },
       {
         $unwind: '$orders',
       },
       {
+        $project: {
+          userId: '$userId',
+          total: {
+            $multiply: ['$orders.price', '$orders.quantity'],
+          },
+        },
+      },
+      {
         $group: {
-          totalPrice: { $sum: '$orders.price' },
+          _id: '$userId',
+          totalPrice: {
+            $sum: '$total',
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
         },
       },
     ]);
-    return result;
+    return { ...result[0] };
+  } else {
+    throw new Error('User not found');
   }
-  throw new Error('User not found');
 };
 
 export const UserServices = {

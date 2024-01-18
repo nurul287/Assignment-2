@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
 const userNameValidationSchema = z.object({
-  firstName: z.string().min(1).trim(),
-  lastName: z.string().min(1).trim(),
+  firstName: z.string().min(1),
+  lastName: z.string().min(1),
 });
 
 const userAddressValidationSchema = z.object({
@@ -26,7 +26,7 @@ const userValidationSchema = z.object({
   email: z.string().email(),
   hobbies: z.string().array(),
   address: userAddressValidationSchema,
-  isActive: z.boolean().default(true),
+  isActive: z.boolean(),
   orders: userOrderValidationSchema.array().optional(),
   isDeleted: z.boolean().default(false),
 });

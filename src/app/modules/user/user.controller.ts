@@ -55,7 +55,10 @@ const getSingleUser = async (req: Request, res: Response) => {
     res.status(500).json({
       success: false,
       message: error.message,
-      error,
+      error: {
+        code: 404,
+        description: 'User not found!',
+      },
     });
   }
 };
@@ -73,7 +76,10 @@ const deleteUser = async (req: Request, res: Response) => {
     res.status(500).json({
       success: false,
       message: error.message,
-      error,
+      error: {
+        code: 404,
+        description: 'User not found!',
+      },
     });
   }
 };
@@ -82,9 +88,8 @@ const updateUser = async (req: Request, res: Response) => {
   try {
     const userData = req.body as IUser;
     const { userId } = req.params;
-    const zodParseData = userValidationSchema.parse(userData);
     const result = await UserServices.updateUserIntoDB(
-      zodParseData,
+      userData,
       Number(userId),
     );
     res.status(200).json({
@@ -96,7 +101,10 @@ const updateUser = async (req: Request, res: Response) => {
     res.status(500).json({
       success: false,
       message: error.message,
-      error,
+      error: {
+        code: 404,
+        description: 'User not found!',
+      },
     });
   }
 };
@@ -116,7 +124,10 @@ const updateUserOrder = async (req: Request, res: Response) => {
     res.status(500).json({
       success: false,
       message: error.message,
-      error,
+      error: {
+        code: 404,
+        description: 'User not found!',
+      },
     });
   }
 };
@@ -134,7 +145,10 @@ const getSingleUserOrders = async (req: Request, res: Response) => {
     res.status(500).json({
       success: false,
       message: error.message,
-      error,
+      error: {
+        code: 404,
+        description: 'User not found!',
+      },
     });
   }
 };
@@ -152,7 +166,10 @@ const getUserOrderTotal = async (req: Request, res: Response) => {
     res.status(500).json({
       success: false,
       message: error.message,
-      error,
+      error: {
+        code: 404,
+        description: 'User not found!',
+      },
     });
   }
 };

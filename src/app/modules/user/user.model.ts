@@ -9,52 +9,60 @@ import {
   UserModel,
 } from './user.interface';
 
-const userNameSchema = new Schema<IUserName>({
-  firstName: {
-    type: String,
-    required: [true, 'First name is required'],
-    maxlength: [20, 'First Name cannot be more than 20 characters'],
-    trim: true,
+const userNameSchema = new Schema<IUserName>(
+  {
+    firstName: {
+      type: String,
+      required: [true, 'First name is required'],
+      trim: true,
+    },
+    lastName: {
+      type: String,
+      required: [true, 'Last name is required'],
+      trim: true,
+    },
   },
-  lastName: {
-    type: String,
-    required: [true, 'Last name is required'],
-    trim: true,
-  },
-});
+  { _id: false },
+);
 
-const userAddressSchema = new Schema<IUserAddress>({
-  street: {
-    type: String,
-    required: [true, 'Street name is required'],
-    trim: true,
+const userAddressSchema = new Schema<IUserAddress>(
+  {
+    street: {
+      type: String,
+      required: [true, 'Street name is required'],
+      trim: true,
+    },
+    city: {
+      type: String,
+      required: [true, 'City is required'],
+      trim: true,
+    },
+    country: {
+      type: String,
+      required: [true, 'Country is required'],
+      trim: true,
+    },
   },
-  city: {
-    type: String,
-    required: [true, 'City is required'],
-    trim: true,
-  },
-  country: {
-    type: String,
-    required: [true, 'Country is required'],
-    trim: true,
-  },
-});
+  { _id: false },
+);
 
-const userOrderSchema = new Schema<IUserOrder>({
-  productName: {
-    type: String,
-    required: [true, 'Product Name is required'],
+const userOrderSchema = new Schema<IUserOrder>(
+  {
+    productName: {
+      type: String,
+      required: [true, 'Product Name is required'],
+    },
+    price: {
+      type: Number,
+      required: [true, 'Price is required'],
+    },
+    quantity: {
+      type: Number,
+      required: [true, 'Quantity is required'],
+    },
   },
-  price: {
-    type: Number,
-    required: [true, 'Price is required'],
-  },
-  quantity: {
-    type: Number,
-    required: [true, 'Quantity is required'],
-  },
-});
+  { _id: false },
+);
 
 const userSchema = new Schema<IUser, UserModel>({
   userId: {
@@ -66,6 +74,7 @@ const userSchema = new Schema<IUser, UserModel>({
     type: String,
     required: [true, 'User name is required'],
     unique: true,
+    trim: true,
   },
   password: {
     type: String,
@@ -77,7 +86,7 @@ const userSchema = new Schema<IUser, UserModel>({
     type: userNameSchema,
     required: [true, 'Full name is required'],
   },
-  age: { type: Number, required: true },
+  age: { type: Number, required: [true, 'Age is required'] },
   email: {
     type: String,
     required: [true, 'Email is required'],
@@ -91,8 +100,8 @@ const userSchema = new Schema<IUser, UserModel>({
     type: userAddressSchema,
     required: [true, 'Address is required'],
   },
-  isActive: { type: Boolean, default: true },
-  orders: userOrderSchema,
+  isActive: { type: Boolean, required: true },
+  orders: [userOrderSchema],
   isDeleted: {
     type: Boolean,
     default: false,
@@ -132,8 +141,8 @@ userSchema.pre('aggregate', function (next) {
 });
 
 // creating a custom static method
-userSchema.statics.isUserExists = async (id: string) => {
-  const existingUser = await User.findOne({ id });
+userSchema.statics.isUserExists = async (userId: number) => {
+  const existingUser = await User.findOne({ userId });
   return existingUser;
 };
 
