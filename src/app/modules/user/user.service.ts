@@ -15,8 +15,11 @@ const getAllUsersFromBD = async () => {
 };
 
 const getSingleUserFromBD = async (userId: number) => {
-  const result = await User.findOne({ userId });
-  return result;
+  if (await User.isUserExists(userId)) {
+    const result = await User.findOne({ userId });
+    return result;
+  }
+  throw new Error('User not found');
 };
 
 const deleteUserFromBD = async (userId: number) => {
@@ -43,6 +46,14 @@ const updateUserOrderIntoDB = async (orderData: IUserOrder, userId: number) => {
   throw new Error('User not found');
 };
 
+const getSingleUserOrdersFromDB = async (userId: number) => {
+  if (await User.isUserExists(userId)) {
+    const result = await User.findOne({ userId });
+    return result;
+  }
+  throw new Error('User not found');
+};
+
 export const UserServices = {
   createUserIntoDB,
   getAllUsersFromBD,
@@ -50,4 +61,5 @@ export const UserServices = {
   updateUserIntoDB,
   deleteUserFromBD,
   updateUserOrderIntoDB,
+  getSingleUserOrdersFromDB,
 };
