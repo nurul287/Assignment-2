@@ -14,14 +14,18 @@ const getAllUsersFromBD = async () => {
   return result;
 };
 
-const getSingleUserFromBD = async (userId: string) => {
+const getSingleUserFromBD = async (userId: number) => {
   const result = await User.findOne({ userId });
   return result;
 };
 
-const deleteUserFromBD = async (userId: string) => {
-  const result = await User.updateOne({ userId }, { isDeleted: true });
-  return result;
+const deleteUserFromBD = async (userId: number) => {
+  if (await User.isUserExists(userId)) {
+    const result = await User.updateOne({ userId }, { isDeleted: true });
+    return result;
+  } else {
+    throw new Error('User already exists!');
+  }
 };
 
 export const UserServices = {

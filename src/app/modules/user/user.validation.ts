@@ -17,7 +17,7 @@ const userOrderValidationSchema = z.object({
   quantity: z.number(),
 });
 
-const studentValidationSchema = z.object({
+const userValidationSchema = z.object({
   userId: z.number(),
   password: z.string().max(20),
   username: z.string().min(1),
@@ -27,8 +27,8 @@ const studentValidationSchema = z.object({
   hobbies: z.string().array(),
   address: userAddressValidationSchema,
   isActive: z.boolean().default(true),
-  orders: userOrderValidationSchema.optional(),
+  orders: userOrderValidationSchema.array().optional(),
   isDeleted: z.boolean().default(false),
 });
 
-export default studentValidationSchema;
+export default userValidationSchema;
