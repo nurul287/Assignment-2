@@ -11,7 +11,7 @@ const userAddressValidationSchema = z.object({
   country: z.string().min(1),
 });
 
-const userOrderValidationSchema = z.object({
+export const userOrderValidationSchema = z.object({
   productName: z.string().min(1),
   price: z.number(),
   quantity: z.number(),

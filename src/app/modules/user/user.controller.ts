@@ -1,7 +1,9 @@
 import { Request, Response } from 'express';
-import { IUser } from './user.interface';
+import { IUser, IUserOrder } from './user.interface';
 import { UserServices } from './user.service';
-import userValidationSchema from './user.validation';
+import userValidationSchema, {
+  userOrderValidationSchema,
+} from './user.validation';
 
 const createUser = async (req: Request, res: Response) => {
   try {
@@ -99,10 +101,31 @@ const updateUser = async (req: Request, res: Response) => {
   }
 };
 
+const updateUserOrder = async (req: Request, res: Response) => {
+  try {
+    const orderData = req.body as IUserOrder;
+    const { userId } = req.params;
+    const zodParseData = userOrderValidationSchema.parse(orderData);
+    await UserServices.updateUserOrderIntoDB(zodParseData, Number(userId));
+    res.status(200).json({
+      success: true,
+      message: 'Order created successfully!',
+      data: null,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+      error,
+    });
+  }
+};
+
 export const UserControllers = {
   createUser,
   getAllUsers,
   getSingleUser,
   deleteUser,
   updateUser,
+  updateUserOrder,
 };
