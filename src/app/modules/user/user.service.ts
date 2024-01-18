@@ -24,13 +24,22 @@ const deleteUserFromBD = async (userId: number) => {
     const result = await User.updateOne({ userId }, { isDeleted: true });
     return result;
   } else {
-    throw new Error('User already exists!');
+    throw new Error('User not found');
   }
+};
+
+const updateUserIntoDB = async (userData: IUser, userId: number) => {
+  if (await User.isUserExists(userData.userId)) {
+    const result = await User.updateOne({ userId }, userData);
+    return result;
+  }
+  throw new Error('User not found');
 };
 
 export const UserServices = {
   createUserIntoDB,
   getAllUsersFromBD,
   getSingleUserFromBD,
+  updateUserIntoDB,
   deleteUserFromBD,
 };

@@ -76,9 +76,33 @@ const deleteUser = async (req: Request, res: Response) => {
   }
 };
 
+const updateUser = async (req: Request, res: Response) => {
+  try {
+    const userData = req.body as IUser;
+    const { userId } = req.params;
+    const zodParseData = userValidationSchema.parse(userData);
+    const result = await UserServices.updateUserIntoDB(
+      zodParseData,
+      Number(userId),
+    );
+    res.status(200).json({
+      success: true,
+      message: 'User updated successfully!',
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+      error,
+    });
+  }
+};
+
 export const UserControllers = {
   createUser,
   getAllUsers,
   getSingleUser,
   deleteUser,
+  updateUser,
 };
