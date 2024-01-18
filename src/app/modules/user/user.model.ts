@@ -40,6 +40,7 @@ const userAddressSchema = new Schema<IUserAddress>({
     trim: true,
   },
 });
+
 const userOrderSchema = new Schema<IUserOrder>({
   productName: {
     type: String,

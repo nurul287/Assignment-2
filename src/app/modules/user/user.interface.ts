@@ -32,5 +32,5 @@ export interface IUser {
 
 // for creating static
 export interface UserModel extends Model<IUser> {
-  isUserExists: (id: string) => Promise<IUser | null>;
+  isUserExists: (id: number) => Promise<IUser | null>;
 }
