@@ -139,6 +139,24 @@ const getSingleUserOrders = async (req: Request, res: Response) => {
   }
 };
 
+const getUserOrderTotal = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+    const result = await UserServices.getUserOrderTotalFromDB(Number(userId));
+    res.status(200).json({
+      success: true,
+      message: 'Total price calculated successfully!',
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+      error,
+    });
+  }
+};
+
 export const UserControllers = {
   createUser,
   getAllUsers,
@@ -147,4 +165,5 @@ export const UserControllers = {
   updateUser,
   updateUserOrder,
   getSingleUserOrders,
+  getUserOrderTotal,
 };
